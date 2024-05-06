@@ -28,7 +28,13 @@ class MathEngine:
             return [response, None]
 
     def call(self, row, calculate_api_cost: bool = False):
-        conversation_history = ast.literal_eval(row[self.config['conversation_history_key']])
+
+        try:
+            conversation_history = ast.literal_eval(row[self.config['conversation_history_key']])
+        except (ValueError, SyntaxError) as e:
+            print(f"Skipping row due to error in conversation history.")
+            return "NOT_APPLICABLE", 0, 0
+        
         users_response = row[self.config['users_response_key']]
         human_evaluation = row[self.config['human_evaluation_key']]
 
@@ -36,7 +42,7 @@ class MathEngine:
      
         llm_equivalence, api_cost = result
 
-        print(f"OUTPUT: Correct= {llm_equivalence==human_evaluation}, Time Taken= {time_taken_seconds}, Cost= ${api_cost}")
+        print(f"OUTPUT => Correct: {'Yes' if llm_equivalence == human_evaluation else 'No'}, Time Taken: {time_taken_seconds}, Cost: ${api_cost}")
         return llm_equivalence, time_taken_seconds, api_cost
 
     def run(self, calculate_api_cost: bool = False):
@@ -57,7 +63,9 @@ class MathEngine:
 
     def evaluate(self):
 
-        df = pd.read_csv(self.output_file)
+        total_df = pd.read_csv(self.output_file)
+
+        df = total_df[total_df[self.config['llm_equivalent_key']] != 'NOT_APPLICABLE']
 
         total_rows = len(df)
 

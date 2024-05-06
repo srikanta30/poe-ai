@@ -59,8 +59,9 @@ class LLM:
         if calculate_api_cost:
             with get_openai_callback() as cb:
                 reponse = llm_chain.invoke(input=input)
-                print("Expected Answer", reponse["expected_answer"])
-                print("Users Response", users_response)
+                print("Bot's Last Question: ", bots_last_question)
+                print("Expected Answer: ", reponse["expected_answer"])
+                print("Users Response: ", users_response)
             return [reponse["content"], cb.total_cost]
         else:
             reponse = llm_chain.invoke(input=input)
