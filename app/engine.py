@@ -81,6 +81,7 @@ class MathEngine:
         total_time_taken_sum = df[self.config['time_taken_key']].sum()
         total_api_cost_sum = df[self.config['api_cost_key']].sum()
 
+        print(f"Total Rows: {total_rows}")
         print(f"Accuracy: {num_matches/total_rows*100}%")
         print(f"Speed: {total_time_taken_sum} secs")
         print(f"Cost: ${total_api_cost_sum}")
