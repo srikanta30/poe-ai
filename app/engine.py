@@ -47,6 +47,8 @@ class MathEngine:
 
     def run(self, calculate_api_cost: bool = False):
         df = pd.read_csv(self.input_file)
+
+        df = df[~df[self.config['users_response_key']].str.contains('https://zoe-images.s3.amazonaws.com/')]
         
         results = df.apply(lambda row: self.call(row=row, calculate_api_cost=calculate_api_cost), axis=1)
         
@@ -66,6 +68,7 @@ class MathEngine:
         total_df = pd.read_csv(self.output_file)
 
         df = total_df[total_df[self.config['llm_equivalent_key']] != 'NOT_APPLICABLE']
+        df = total_df[~total_df[self.config['users_response_key']].str.contains('https://zoe-images.s3.amazonaws.com/')]
 
         total_rows = len(df)
 
